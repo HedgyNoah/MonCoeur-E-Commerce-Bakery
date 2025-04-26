@@ -1,0 +1,36 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /order
+
+spring:
+  application:
+    name: order-service
+  datasource:
+    url: ${DBMS_CONNECTION:jdbc:mysql://localhost:3309/order_service}
+    driverClassName: "com.mysql.cj.jdbc.Driver"
+    username: ${DBMS_USERNAME}
+    password: ${DBMS_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    admin:
+      auto-create-topics: true
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: order-service-group
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+app:
+  product-service:
+    url: ${PS_CONNECTION:http://localhost:8081/product}
+

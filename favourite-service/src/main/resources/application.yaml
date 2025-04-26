@@ -1,0 +1,27 @@
+server:
+  port: 8083
+  servlet:
+    context-path: /favourite
+
+spring:
+  application:
+    name: favourite-service
+  datasource:
+    url: ${DBMS_CONNECTION:jdbc:mysql://localhost:3309/favourite_service}
+    driverClassName: "com.mysql.cj.jdbc.Driver"
+    username: ${DBMS_USERNAME}
+    password: ${DBMS_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: favourite-service-group
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
