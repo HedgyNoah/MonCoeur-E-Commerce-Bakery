@@ -1,7 +1,9 @@
 package fishdicg.moncoeur.identity_service.mapper;
 
+import fishdicg.moncoeur.identity_service.dto.request.ProfileUpdateRequest;
 import fishdicg.moncoeur.identity_service.dto.request.UserCreationRequest;
 import fishdicg.moncoeur.identity_service.dto.request.UserUpdateRequest;
+import fishdicg.moncoeur.identity_service.dto.response.ProfileResponse;
 import fishdicg.moncoeur.identity_service.dto.response.UserResponse;
 import fishdicg.moncoeur.identity_service.entity.User;
 import org.mapstruct.Mapper;
@@ -14,6 +16,10 @@ public interface UserMapper {
 
     UserResponse toUserResponse(User user);
 
+    ProfileResponse toProfileResponse(User user);
+
     @Mapping(target = "roles", ignore = true)
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
+
+    void updateUser(@MappingTarget User user, ProfileUpdateRequest request);
 }

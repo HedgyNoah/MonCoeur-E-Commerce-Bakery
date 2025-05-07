@@ -25,7 +25,7 @@ public class Cart extends AbstractMappedEntity {
     String userId;
 
     @Column(name ="IS_PAYED")
-    boolean payed;
+    boolean isPayed;
 
     @Column(name = "TOTAL_COST")
     Double totalCost;

@@ -13,4 +13,7 @@ public interface ProductClient {
 
     @GetMapping(value = "/internal/name/{productId}")
     ResponseEntity<String> getName(@PathVariable String productId);
+
+    @GetMapping(value = "/internal/image/{productId}")
+    ResponseEntity<String> getImageName(@PathVariable String productId);
 }

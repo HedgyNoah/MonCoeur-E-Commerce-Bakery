@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/manage")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class InventoryController {
@@ -32,7 +32,7 @@ public class InventoryController {
             @RequestParam(value = "size", required = false, defaultValue = "10") int size,
             @RequestParam(value = "sortBy", required = false, defaultValue = "restockDate") String sortBy,
             @RequestParam(value = "order", required = false, defaultValue = "asc") String order,
-            @RequestParam(value = "search", required = false, defaultValue = "search") String search) {
+            @RequestParam(value = "search", required = false, defaultValue = "") String search) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(inventoryService.getAll(page, size, sortBy, order, search));
     }

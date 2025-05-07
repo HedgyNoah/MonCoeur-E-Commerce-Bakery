@@ -1,5 +1,6 @@
 package fishdicg.moncoeur.order_service.controller;
 
+import fishdicg.moncoeur.order_service.dto.PageResponse;
 import fishdicg.moncoeur.order_service.dto.request.OrderRequest;
 import fishdicg.moncoeur.order_service.dto.response.OrderResponse;
 import fishdicg.moncoeur.order_service.service.OrderService;
@@ -29,6 +30,15 @@ public class OrderController {
     ResponseEntity<List<OrderResponse>> getAllOrders() {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(orderService.getAllOrder());
+    }
+
+    @GetMapping("/purchased")
+    ResponseEntity<PageResponse<OrderResponse>> getPurchased(
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "updatedAt") String sortBy,
+            @RequestParam(value = "order", required = false, defaultValue = "asc") String order) {
+        return ResponseEntity.ok(orderService.getPurchased(page, size, sortBy, order));
     }
 
     @GetMapping("/{id}")

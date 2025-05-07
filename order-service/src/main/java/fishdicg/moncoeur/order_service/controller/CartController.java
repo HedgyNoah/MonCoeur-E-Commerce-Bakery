@@ -17,13 +17,22 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
     CartService cartService;
 
-    @GetMapping("/my-cart")
-    ResponseEntity<CartResponse> getMyCart(
+    @GetMapping("/current")
+    ResponseEntity<CartResponse> getCurrent(
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-            @RequestParam(value = "sortBy", required = false, defaultValue = "orderDate") String sortBy,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "updatedAt") String sortBy,
             @RequestParam(value = "order", required = false, defaultValue = "asc") String order) {
-        return ResponseEntity.ok(cartService.getMyCart(page, size, sortBy, order));
+        return ResponseEntity.ok(cartService.getCurrent(page, size, sortBy, order));
+    }
+
+    @GetMapping("/purchased")
+    ResponseEntity<PageResponse<CartResponse>> getPurchased(
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "updatedAt") String sortBy,
+            @RequestParam(value = "order", required = false, defaultValue = "asc") String order) {
+        return ResponseEntity.ok(cartService.getPurchased(page, size, sortBy, order));
     }
 
     @PutMapping("/{id}")
@@ -36,7 +45,7 @@ public class CartController {
     ResponseEntity<PageResponse<CartResponse>> getAllCarts(
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-            @RequestParam(value = "sortBy", required = false, defaultValue = "totalCost") String sortBy,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "updatedAt") String sortBy,
             @RequestParam(value = "order", required = false, defaultValue = "asc") String order,
             @RequestParam(value = "search", required = false, defaultValue = "") String search) {
         return ResponseEntity.ok(cartService.getAllCarts(page, size, sortBy, order, search));

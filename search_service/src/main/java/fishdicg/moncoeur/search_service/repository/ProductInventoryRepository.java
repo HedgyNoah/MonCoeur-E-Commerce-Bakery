@@ -6,8 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ProductInventoryRepository extends ElasticsearchRepository<ProductInventoryDocument, String> {
+    Optional<ProductInventoryDocument> findBySlug(String slug);
+
     Page<ProductInventoryDocument> findByProductNameContainingIgnoreCase (String productName, Pageable pageable);
 
     Page<ProductInventoryDocument> findByCategory(String category, Pageable pageable);

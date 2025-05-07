@@ -25,4 +25,9 @@ public class InternalProductController {
     ResponseEntity<String> getName(@PathVariable String id) {
         return ResponseEntity.ok(productService.getName(id));
     }
+
+    @GetMapping("/image/{id}")
+    ResponseEntity<String> getImageName(@PathVariable String id) {
+        return  ResponseEntity.ok(productService.getImageName(id));
+    }
 }

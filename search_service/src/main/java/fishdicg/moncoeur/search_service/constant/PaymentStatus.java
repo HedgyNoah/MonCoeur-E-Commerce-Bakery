@@ -1,4 +1,4 @@
-package fishdicg.moncoeur.payment_service.constant;
+package fishdicg.moncoeur.search_service.constant;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

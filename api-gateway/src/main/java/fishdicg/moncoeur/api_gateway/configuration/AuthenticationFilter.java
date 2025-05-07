@@ -35,6 +35,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             "/identity/auth/.*",
             "/identity/account/.*",
             "/search/result",
+            "/search/result/.*",
             "/product/categories/all",
             "/media/.*",
     };

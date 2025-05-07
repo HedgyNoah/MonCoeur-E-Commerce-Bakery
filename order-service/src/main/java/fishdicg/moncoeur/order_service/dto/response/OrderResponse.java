@@ -2,12 +2,10 @@ package fishdicg.moncoeur.order_service.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import fishdicg.moncoeur.order_service.constant.DateConstant;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Data
 @Builder
@@ -17,15 +15,23 @@ import java.time.LocalDateTime;
 public class OrderResponse {
     String orderId;
 
-    @JsonFormat(pattern =  DateConstant.DATE_TIME_FORMAT, shape = JsonFormat.Shape.STRING)
-    @DateTimeFormat(pattern = DateConstant.DATE_TIME_FORMAT)
-    LocalDateTime orderDate;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    String productId;
 
     Double orderFee;
     Integer orderQuantity;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    Instant createdAt;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    Instant updatedAt;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    String productName;
+    String imageName;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    String orderName;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     ProductResponse product;

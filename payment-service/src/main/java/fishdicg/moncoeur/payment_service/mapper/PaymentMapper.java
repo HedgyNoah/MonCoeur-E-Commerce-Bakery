@@ -1,6 +1,7 @@
 package fishdicg.moncoeur.payment_service.mapper;
 
 import fishdicg.moncoeur.payment_service.dto.request.PaymentRequest;
+import fishdicg.moncoeur.payment_service.dto.request.ShippingUpdateRequest;
 import fishdicg.moncoeur.payment_service.dto.response.PaymentResponse;
 import fishdicg.moncoeur.payment_service.entity.Payment;
 import org.mapstruct.Mapper;
@@ -14,4 +15,6 @@ public interface PaymentMapper {
     PaymentResponse toPaymentResponse(Payment payment);
 
     void updatePayment(@MappingTarget Payment payment, PaymentRequest request);
+
+    void updatePayment(@MappingTarget Payment payment, ShippingUpdateRequest request);
 }

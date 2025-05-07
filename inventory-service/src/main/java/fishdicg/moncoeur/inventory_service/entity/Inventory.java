@@ -27,6 +27,10 @@ public class Inventory extends AbstractMappedEntity {
     @Column(name = "PRODUCT_QUANTITY", nullable = false)
     Integer quantity;
 
+    @Builder.Default
+    @Column(name = "SOLD_QUANTITY", nullable = false)
+    Integer sold = 0;
+
     @Column(name = "LOW_STOCK_THRESHOLD", nullable = false)
     Integer lowStockThreshold;
 

@@ -32,7 +32,7 @@ public class InventoryService {
     public InventoryResponse create(InventoryRequest request) {
         Inventory inventory = inventoryMapper.toInventory(request);
         inventory.setRestockDate(Instant.now());
-        return inventoryMapper.toInventoryResponse(inventory);
+        return inventoryMapper.toInventoryResponse(inventoryRepository.save(inventory));
     }
 
     public PageResponse<InventoryResponse> getAll(int page, int size, String sortBy,

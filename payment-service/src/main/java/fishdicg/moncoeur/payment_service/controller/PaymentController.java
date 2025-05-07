@@ -1,7 +1,9 @@
 package fishdicg.moncoeur.payment_service.controller;
 
+import fishdicg.moncoeur.payment_service.constant.PaymentStatus;
 import fishdicg.moncoeur.payment_service.dto.PageResponse;
 import fishdicg.moncoeur.payment_service.dto.request.PaymentRequest;
+import fishdicg.moncoeur.payment_service.dto.request.ShippingUpdateRequest;
 import fishdicg.moncoeur.payment_service.dto.response.PaymentResponse;
 import fishdicg.moncoeur.payment_service.service.PaymentService;
 import lombok.AccessLevel;
@@ -37,10 +39,16 @@ public class PaymentController {
                 .body(paymentService.getAll(page, size, sortBy, order, search));
     }
 
-    @GetMapping("/my-payments")
-    ResponseEntity<List<PaymentResponse>> getMyPayments() {
+    @GetMapping("/shipping")
+    ResponseEntity<PageResponse<PaymentResponse>> getMyPayments(
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "updatedAt") String sortBy,
+            @RequestParam(value = "order", required = false, defaultValue = "asc") String order,
+            @RequestParam(value = "search", required = false, defaultValue = "") String search
+    ) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(paymentService.getMyPayments());
+                .body(paymentService.getMyShipping(page, size, sortBy, order, search));
     }
 
     @GetMapping("/{id}")
@@ -49,10 +57,18 @@ public class PaymentController {
                 .body(paymentService.getOne(id));
     }
 
-    @PutMapping("/update/{id}")
-    ResponseEntity<PaymentResponse> updatePayment(@PathVariable String id) {
+    @PutMapping("/shipping/{id}")
+    ResponseEntity<PaymentResponse> updatePayment(@PathVariable String id,
+                                                  @RequestBody ShippingUpdateRequest request) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(paymentService.update(id));
+                .body(paymentService.updateShipping(id, request));
+    }
+
+    @PutMapping("/update/{id}")
+    ResponseEntity<PaymentResponse> updatePayment(@PathVariable String id,
+                                                  @RequestBody PaymentStatus paymentStatus) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(paymentService.update(id, paymentStatus));
     }
 
     @PutMapping("/complete/{id}")

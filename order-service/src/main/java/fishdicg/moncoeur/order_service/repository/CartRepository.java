@@ -11,4 +11,6 @@ public interface CartRepository extends JpaRepository<Cart, String> {
     Page<Cart> findAll(Pageable pageable);
 
     Page<Cart> findAllByUserIdContaining(String userId, Pageable pageable);
+
+    Page<Cart> findAllByUserIdContainingAndIsPayedTrue(String userId, Pageable pageable);
 }

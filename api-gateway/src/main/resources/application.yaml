@@ -7,8 +7,16 @@ app:
 spring:
   application:
     name: api-gateway
+  codec:
+    max-in-memory-size: 10MB
   cloud:
     gateway:
+      maxRequestSize: 10MB
+      httpclient:
+        max-initial-line-length: 50000
+        max-header-size: 16000
+        response-timeout: 30s
+        max-body-size: 10MB
       routes:
         - id: identity_service
           uri: http://localhost:8080

@@ -9,6 +9,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.Document;
 
+import java.time.Instant;
 
 @Setter
 @Getter
@@ -29,10 +30,24 @@ public class ProductInventoryDocument {
     )
     String productName;
     String productDescription;
+
+    @MultiField(
+            mainField = @Field(type = FieldType.Text),
+            otherFields = {
+                    @InnerField(suffix = "keyword", type = FieldType.Keyword)
+            }
+    )
+    String slug;
     Double price;
     String imageName;
     Integer quantity;
     Integer lowStockThreshold;
+
+    @Field(type = FieldType.Date)
+    Instant updatedAt;
+
+    @Field(type = FieldType.Date)
+    Instant createdAt;
 
     @MultiField(
             mainField = @Field(type = FieldType.Text),

@@ -3,8 +3,6 @@ package event.dto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.Instant;
-
 @Data
 @Setter
 @Getter
@@ -12,14 +10,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateProductEvent {
+public class DecreaseStockEvent {
     String productId;
-    String productName;
-    String productDescription;
-    Double price;
     Integer quantity;
-    Integer lowStockThreshold;
-    String category;
-    Instant createdAt;
-    Instant updatedAt;
 }

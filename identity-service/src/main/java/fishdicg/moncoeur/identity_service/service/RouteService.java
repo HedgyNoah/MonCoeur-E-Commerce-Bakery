@@ -33,11 +33,13 @@ public class RouteService {
         List<NavigationResponse> adminRoutes = Arrays.asList(
                 Navigation.PRODUCTS_ROUTE,
                 Navigation.CATEGORIES_ROUTE,
-                Navigation.USERS_ROUTE
+                Navigation.USERS_ROUTE,
+                Navigation.SALES_ROUTE
         );
         List<NavigationResponse> userRoutes = Arrays.asList(
                 Navigation.PROFILE_ROUTE,
-                Navigation.HISTORY_ROUTE
+                Navigation.HISTORY_ROUTE,
+                Navigation.SHIPPING_ROUTE
         );
         return isAdmin ? adminRoutes : userRoutes;
     }

@@ -63,4 +63,10 @@ public class ProductController {
         productService.deleteProduct(id);
         return new ResponseEntity<>("Product deleted", HttpStatus.OK);
     }
+
+    @PostMapping("/sync")
+    ResponseEntity<String> syncTimeStamp() {
+        productService.syncProducts();
+        return ResponseEntity.ok("Finished syncing.");
+    }
 }

@@ -26,11 +26,20 @@ public class User extends AbstractMappedEntity {
     @Column(name = "PASSWORD", nullable = false)
     String password;
 
+    @Column(name = "FULL_NAME")
+    String fullName;
+
     @Column(name = "EMAIL")
     String email;
 
     @Column(name = "PHONE_NUMBER")
     String phoneNumber;
+
+    @Column(name = "CITY")
+    String city;
+
+    @Column(name = "ADDRESS")
+    String address;
 
     @Column(name = "VERIFIED", nullable = false)
     Boolean verified;

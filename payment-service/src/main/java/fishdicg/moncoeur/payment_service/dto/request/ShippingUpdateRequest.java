@@ -1,6 +1,5 @@
 package fishdicg.moncoeur.payment_service.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,7 +10,9 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PaymentRequest {
-    String cartId;
-    String userId;
+public class ShippingUpdateRequest {
+    String fullName;
+    String city;
+    String address;
+    String phoneNumber;
 }

@@ -5,6 +5,7 @@ import event.dto.UpdateProductEvent;
 import fishdicg.moncoeur.search_service.dto.ProductInventoryResponse;
 import fishdicg.moncoeur.search_service.entity.ProductInventoryDocument;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
@@ -13,6 +14,7 @@ public interface ProductInventoryMapper {
 
     ProductInventoryResponse toProductInventoryResponse(ProductInventoryDocument productInventoryDocument);
 
+    @Mapping(target = "imageName", ignore = true)
     void updateProductInventoryDocument(
             @MappingTarget ProductInventoryDocument productInventoryDocument,
             UpdateProductEvent updateProductEvent);

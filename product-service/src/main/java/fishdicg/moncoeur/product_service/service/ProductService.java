@@ -38,9 +38,10 @@ public class ProductService {
         Category category = categoryRepository.findByCategoryTitle(request.getCategory())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
         product.setCategory(category);
+        product.setSlug(generateSlug(product.getProductName()));
         product = productRepository.save(product);
 
-        kafkaProducerService.createProduct(product.getProductId(), request);
+        kafkaProducerService.createProduct(product, request);
         return productMapper.toProductResponse(product);
     }
 
@@ -52,9 +53,10 @@ public class ProductService {
         Category category = categoryRepository.findByCategoryTitle(request.getCategory())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
         product.setCategory(category);
+        product.setSlug(generateSlug(product.getProductName()));
 
         product = productRepository.save(product);
-        kafkaProducerService.updateProduct(product.getProductId(), request);
+        kafkaProducerService.updateProduct(product, request);
 
         return productMapper.toProductResponse(product);
     }
@@ -140,5 +142,32 @@ public class ProductService {
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
 
         return product.getProductName();
+    }
+
+    public String getImageName(String productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+
+        return product.getImageName();
+    }
+
+    public void syncProducts() {
+        List<Product> products = productRepository.findAll();
+        products.forEach(kafkaProducerService::timeStampSync);
+    }
+
+    private String generateSlug(String productName) {
+        String baseSlug = productName.toLowerCase()
+                .replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("(^-)|(-$)", "");
+        String uniqueSlug = baseSlug;
+        int suffix = 1;
+
+        while (productRepository.existsBySlug(uniqueSlug)) {
+            uniqueSlug = baseSlug + "-" + suffix;
+            suffix++;
+        }
+
+        return uniqueSlug;
     }
 }

@@ -17,6 +17,7 @@ public class InventoryResponse {
     String productName;
     Integer quantity;
     Integer lowStockThreshold;
+    Integer sold;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     Instant createdAt;

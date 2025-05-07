@@ -1,7 +1,10 @@
 package fishdicg.moncoeur.identity_service.controller;
 
 import fishdicg.moncoeur.identity_service.dto.PageResponse;
+import fishdicg.moncoeur.identity_service.dto.request.ChangePasswordRequest;
+import fishdicg.moncoeur.identity_service.dto.request.ProfileUpdateRequest;
 import fishdicg.moncoeur.identity_service.dto.request.UserUpdateRequest;
+import fishdicg.moncoeur.identity_service.dto.response.ProfileResponse;
 import fishdicg.moncoeur.identity_service.dto.response.UserResponse;
 import fishdicg.moncoeur.identity_service.service.UserService;
 import lombok.AccessLevel;
@@ -55,12 +58,17 @@ public class UserController {
     }
 
     @GetMapping("/myInfo")
-    ResponseEntity<UserResponse> getMyInfo() {
+    ResponseEntity<ProfileResponse> getMyInfo() {
         return new ResponseEntity<>(userService.getMyInfo(), HttpStatus.OK);
     }
 
     @PutMapping("/myInfo")
-    ResponseEntity<UserResponse> updateMyInfo(@RequestBody UserUpdateRequest request) {
+    ResponseEntity<ProfileResponse> updateMyInfo(@RequestBody ProfileUpdateRequest request) {
         return new ResponseEntity<>(userService.updateMyInfo(request), HttpStatus.OK);
+    }
+
+    @PutMapping("/myInfo/pass")
+    ResponseEntity<String> updateMyPassword(@RequestBody ChangePasswordRequest request) {
+        return new ResponseEntity<>(userService.changePassword(request), HttpStatus.OK);
     }
 }

@@ -12,6 +12,7 @@ import fishdicg.moncoeur.order_service.mapper.CartMapper;
 import fishdicg.moncoeur.order_service.mapper.OrderMapper;
 import fishdicg.moncoeur.order_service.repository.CartRepository;
 import fishdicg.moncoeur.order_service.repository.OrderRepository;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -59,7 +60,7 @@ public class CartService {
     public void updateCartTotal(String cartId) {
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_EXISTED));
-        Double totalCost = 0.0;
+        Double totalCost = 0d;
         for (Order order : cart.getOrders()) {
             totalCost += order.getOrderFee();
         }
@@ -128,18 +129,53 @@ public class CartService {
                 .build();
     }
 
-    public CartResponse getMyCart(int page, int size, String sortBy, String order) {
+    @Transactional
+    public PageResponse<CartResponse> getPurchased(int page, int size,
+                                                  String sortBy, String order) {
+        Sort sort = "asc".equalsIgnoreCase(order) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        Page<Cart> pageData;
+
+        var userId = SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+        pageData = cartRepository.findAllByUserIdContainingAndIsPayedTrue(userId, pageable);
+
+        List<CartResponse> cartResponseList = pageData.getContent().stream()
+                .map(cart -> {
+                    var orderResponses = getOrdersWithPagination(cart, page, size, sortBy, order);
+
+                    var cartResponse = cartMapper.toCartResponse(cart);
+                    cartResponse.setOrders(orderResponses);
+                    return cartResponse;
+                }).toList();
+
+        return PageResponse.<CartResponse>builder()
+                .currentPage(page)
+                .pageSize(pageData.getSize())
+                .totalPage(pageData.getTotalPages())
+                .totalElements(pageData.getTotalElements())
+                .sortBy(sortBy)
+                .order(order)
+                .data(cartResponseList)
+                .build();
+    }
+
+    public CartResponse getCurrent(int page, int size, String sortBy, String order) {
         var userId = SecurityContextHolder.getContext()
                 .getAuthentication().getName();
         Cart cart = cartRepository.findByUserIdAndIsPayedFalse(userId);
 
-        var orderResponses = getOrdersWithPagination(cart, page, size, sortBy, order);
+        if(cart != null) {
+            var orderResponses = getOrdersWithPagination(cart, page, size, sortBy, order);
 
-        var cartResponse = cartMapper.toCartResponse(cart);
-        log.info("Orders: {}", orderResponses);
-        cartResponse.setOrders(orderResponses);
-
-        return cartResponse;
+            var cartResponse = cartMapper.toCartResponse(cart);
+            log.info("Orders: {}", orderResponses);
+            cartResponse.setOrders(orderResponses);
+            return cartResponse;
+        } else {
+            return CartResponse.builder().build();
+        }
     }
 
     public boolean cartExisted(String userId) {

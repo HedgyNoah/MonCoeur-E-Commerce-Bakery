@@ -1,5 +1,6 @@
 package fishdicg.moncoeur.order_service.service;
 
+import fishdicg.moncoeur.order_service.dto.PageResponse;
 import fishdicg.moncoeur.order_service.dto.request.CartRequest;
 import fishdicg.moncoeur.order_service.dto.request.OrderRequest;
 import fishdicg.moncoeur.order_service.dto.response.OrderResponse;
@@ -15,11 +16,14 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
@@ -40,8 +44,16 @@ public class OrderService {
         log.info("USER ID: {}", userId);
         Order order = orderMapper.toOrder(request);
 
-        LocalDateTime now = LocalDateTime.now();
-        order.setOrderDate(now);
+        var imageName = productClient.getImageName(request.getProductId()).getBody();
+        if(imageName != null) {
+            order.setImageName(imageName);
+        } else throw new AppException(ErrorCode.PRODUCT_NOT_EXISTED);
+
+        var productName = productClient.getName(
+                request.getProductId()).getBody();
+        if(productName != null) {
+            order.setOrderName(productName);
+        } else throw new AppException(ErrorCode.PRODUCT_NOT_EXISTED);
 
         var productPrice = productClient
                 .getPrice(request.getProductId()).getBody();
@@ -98,6 +110,31 @@ public class OrderService {
 
     public List<OrderResponse> getAllOrder() {
         return orderRepository.findAll().stream().map(orderMapper::toOrderResponse).toList();
+    }
+
+    public PageResponse<OrderResponse> getPurchased(int page, int size,
+                                                  String sortBy, String order) {
+        Sort sort = "asc".equalsIgnoreCase(order) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+
+        var userId = SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+
+        Page<Order> pageData = orderRepository.findPaidOrdersByUserId(userId, pageable);
+
+        List<OrderResponse> orderResponseList = pageData.getContent().stream()
+                .map(orderMapper::toOrderResponse).toList();
+
+        return PageResponse.<OrderResponse>builder()
+                .currentPage(page)
+                .pageSize(pageData.getSize())
+                .totalPage(pageData.getTotalPages())
+                .totalElements(pageData.getTotalElements())
+                .sortBy(sortBy)
+                .order(order)
+                .data(orderResponseList)
+                .build();
     }
 
     public void deleteOrder(String orderId) {

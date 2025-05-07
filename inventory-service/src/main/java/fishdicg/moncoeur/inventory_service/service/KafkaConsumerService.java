@@ -24,33 +24,50 @@ public class KafkaConsumerService {
     InventoryRepository inventoryRepository;
     InventoryService inventoryService;
 
-    @KafkaListener(topics = "create-product-topic", groupId = "inventory-service-group")
+    @KafkaListener(topics = "create-product-topic")
     public void createProduct(CreateProductEvent event) {
-        inventoryService.create(InventoryRequest.builder()
-                .productId(event.getProductId())
-                .quantity(event.getQuantity())
-                .lowStockThreshold(event.getLowStockThreshold()).build());
+        try {
+            inventoryService.create(InventoryRequest.builder()
+                    .productId(event.getProductId())
+                    .quantity(event.getQuantity())
+                    .lowStockThreshold(event.getLowStockThreshold()).build());
+        } catch (Exception e) {
+            log.error("Error create product", e);
+        }
     }
 
-    @KafkaListener(topics = "update-product-topic", groupId = "inventory-service-group")
+    @KafkaListener(topics = "update-product-topic")
     public void updateProduct(UpdateProductEvent event) {
-        inventoryService.update(event.getProductId(), InventoryRequest.builder()
-                .productId(event.getProductId())
-                .quantity(event.getQuantity())
-                .lowStockThreshold(event.getLowStockThreshold()).build());
+        try {
+            inventoryService.update(event.getProductId(), InventoryRequest.builder()
+                    .productId(event.getProductId())
+                    .quantity(event.getQuantity())
+                    .lowStockThreshold(event.getLowStockThreshold()).build());
+        } catch (Exception e) {
+            log.error("Error update product", e);
+        }
     }
 
-    @KafkaListener(topics = "delete-item-topic", groupId = "inventory-service-group")
+    @KafkaListener(topics = "delete-item-topic")
     public void deleteItem(DeleteItemEvent event) {
-        inventoryService.delete(event.getProductId());
+        try {
+            inventoryService.delete(event.getProductId());
+        } catch (Exception e) {
+            log.error("Error delete product", e);
+        }
     }
 
-    @KafkaListener(topics = "decrease-stock-topic", groupId = "inventory-service-group")
+    @KafkaListener(topics = "decrease-stock-topic")
     public void decreaseStock(DecreaseStockEvent event) {
-        Inventory inventory = inventoryRepository.findByProductId(event.getProductId())
-                .orElseThrow(() -> new AppException(ErrorCode.INVENTORY_NOT_EXISTED));
-        inventory.setQuantity(inventory.getQuantity() - event.getQuantity());
-        inventoryRepository.save(inventory);
-        log.info("Quantity after get decreased: {}", inventory.getQuantity() - event.getQuantity());
+        try {
+            Inventory inventory = inventoryRepository.findByProductId(event.getProductId())
+                    .orElseThrow(() -> new AppException(ErrorCode.INVENTORY_NOT_EXISTED));
+            inventory.setQuantity(inventory.getQuantity() - event.getQuantity());
+            inventory.setSold(inventory.getSold() + event.getQuantity());
+            inventoryRepository.save(inventory);
+            log.info("Quantity after get decreased: {}", inventory.getQuantity() - event.getQuantity());
+        } catch (Exception e) {
+            log.error("Error decrease stock", e);
+        }
     }
 }

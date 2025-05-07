@@ -33,7 +33,7 @@ public class EmailService {
 
     public void sendMail(CreateUserEvent event) {
         String content = "Your verification code is: " + event.getCode();
-        String subject = "Planner Verification";
+        String subject = "MonCoeur Verification";
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(email);
         message.setTo(event.getEmail());

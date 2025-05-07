@@ -2,10 +2,8 @@ package fishdicg.moncoeur.identity_service.service;
 
 import fishdicg.moncoeur.identity_service.constant.PredefinedRole;
 import fishdicg.moncoeur.identity_service.dto.PageResponse;
-import fishdicg.moncoeur.identity_service.dto.request.SendVerificationRequest;
-import fishdicg.moncoeur.identity_service.dto.request.UserCreationRequest;
-import fishdicg.moncoeur.identity_service.dto.request.UserUpdateRequest;
-import fishdicg.moncoeur.identity_service.dto.request.VerificationRequest;
+import fishdicg.moncoeur.identity_service.dto.request.*;
+import fishdicg.moncoeur.identity_service.dto.response.ProfileResponse;
 import fishdicg.moncoeur.identity_service.dto.response.UserResponse;
 import fishdicg.moncoeur.identity_service.entity.Role;
 import fishdicg.moncoeur.identity_service.entity.User;
@@ -26,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -98,7 +97,7 @@ public class UserService {
         kafkaProducerService.sendEmailEvent(user.getEmail(), code);
     }
 
-    public UserResponse getMyInfo() {
+    public ProfileResponse getMyInfo() {
         var context = SecurityContextHolder.getContext();
         String id = context.getAuthentication().getName();
         log.info("context get name: {}", id);
@@ -106,30 +105,43 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(() ->
             new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        return userMapper.toUserResponse(user);
+        return userMapper.toProfileResponse(user);
     }
 
-    public UserResponse updateMyInfo(UserUpdateRequest request) {
+    public ProfileResponse updateMyInfo(ProfileUpdateRequest request) {
         String id = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         userMapper.updateUser(user, request);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        return userMapper.toProfileResponse(userRepository.save(user));
+    }
 
-        return userMapper.toUserResponse(userRepository.save(user));
+    public String changePassword(ChangePasswordRequest request) {
+        String id = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        boolean authenticated = passwordEncoder.matches(request.getOldPassword(), user.getPassword());
+        if(!authenticated) throw new AppException(ErrorCode.UNAUTHENTICATED);
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        return "Password has been changed";
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public UserResponse updateUser(String id, UserUpdateRequest request) {
+        log.info("Id: {}", id);
         User user = userRepository.findById(id).orElseThrow(() ->
                 new AppException(ErrorCode.USER_NOT_EXISTED));
 
         userMapper.updateUser(user, request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        var roles = roleRepository.findAllById(request.getRoles());
-        user.setRoles(new HashSet<>(roles));
+        if (request.getRoles() != null) {
+            var roles = roleRepository.findAllById(request.getRoles());
+            user.setRoles(new HashSet<>(roles));
+        }
 
         return userMapper.toUserResponse(userRepository.save(user));
     }

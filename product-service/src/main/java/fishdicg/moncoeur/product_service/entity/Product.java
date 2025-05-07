@@ -28,6 +28,9 @@ public class Product extends AbstractMappedEntity {
     @Column(name = "IMAGE_NAME")
     String imageName;
 
+    @Column(name = "SLUG")
+    String slug;
+
     @Column(name = "PRICE")
     Double price;
 
