@@ -6,8 +6,7 @@ Mon Coeur is a modular microservices-based backend system for an e-commerce bake
 
 This backend is divided into several independent microservices:
 
-Java-MonCoeur/
-│
+Java-MonCoeur
 ├── analytic_service/ # Handles data analytics and metrics aggregation
 ├── api-gateway/ # Routes requests to backend services and enforces authentication
 ├── email-service/ # Sends email notifications
