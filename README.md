@@ -7,22 +7,18 @@ Mon Coeur is a modular microservices-based backend system for an e-commerce bake
 This backend is divided into several independent microservices:
 
 Java-MonCoeur
-├── analytic_service/ # Handles data analytics and metrics aggregation
-├── api-gateway/ # Routes requests to backend services and enforces authentication
-├── email-service/ # Sends email notifications
-├── identity-service/ # Manages users and roles (integrated with Keycloak)
-├── inventory-service/ # Manages product stock and availability
-├── media-service/ # Manages file uploads/downloads using MinIO
-├── notification-service/ # Sends system-wide notifications
-├── order-service/ # Handles orders, carts, and checkout logic
-├── payment_service/ # Processes and verifies payments
-├── product-service/ # Manages products and categories
-├── search-service/ # Provides Elasticsearch-based product search
-└── workspace-service/ # Handles workspace and user grouping logic
-
-markdown
-Copy
-Edit
+- analytic_service/ # Handles data analytics and metrics aggregation
+- api-gateway/ # Routes requests to backend services and enforces authentication
+- email-service/ # Sends email notifications
+- identity-service/ # Manages users and roles (integrated with Keycloak)
+- inventory-service/ # Manages product stock and availability
+- media-service/ # Manages file uploads/downloads using MinIO
+- notification-service/ # Sends system-wide notifications
+- order-service/ # Handles orders, carts, and checkout logic
+- payment_service/ # Processes and verifies payments
+- product-service/ # Manages products and categories
+- search-service/ # Provides Elasticsearch-based product search
+- workspace-service/ # Handles workspace and user grouping logic
 
 ## 🚀 Getting Started
 
@@ -42,9 +38,6 @@ Edit
 
 You can run services individually using:
 
-bash
-Copy
-Edit
 docker-compose up --build
 Environment Variables
 Some services depend on the following environment variables or configuration files:
@@ -83,16 +76,8 @@ Lombok, JUnit, and Mockito for cleaner code and testing
 
 🛠️ Build & Test
 To build a service:
-
-bash
-Copy
-Edit
 mvn clean install
 To run tests:
-
-bash
-Copy
-Edit
 mvn test
 📈 Analytics
 The analytic_service consumes Kafka events and periodically aggregates data (e.g., daily views, orders) using scheduled tasks.
